@@ -39,22 +39,41 @@ export default {
             this.tableData = {};
             this.$emit("reset");
         },
+        /**
+         * option 单项配置
+         * tableData 表单组件保存表单输入后的键值对数据
+         * */ 
         renderTable(option, tableData){
             const tableType = {
                 input: () => (
                     <el-form-item label={option.label} label-position="right">
                         <el-input
-                            style={{ width: option.width + "px" }}
+                            style={{ width: (option.width || 260) + "px" }}
                             v-model={tableData[option.valueKey]}
-                            placeholder={option.placeholder}
+                            placeholder={option.placeholder || '请输入内容'}
                         >
                         </el-input>
                     </el-form-item>
-                )
+                ),
+                select: () => (
+                    <el-form-item label={option.label} label-position="right">
+                        <el-select
+                            style={{ width: (option.width || 260) + "px" }}
+                            v-model={tableData[option.valueKey]} 
+                            multiple={option.multiple || false}
+                            placeholder={option.placeholder || '请选择内容'}
+                        >
+                            { 
+                                option.selectOptions.map(item => (
+                                    <el-option label={item.label} value={item.value}></el-option>
+                                )) 
+                            }
+                        </el-select>
+                    </el-form-item>
+                ),
+                
             }
-            if(tableType[option.type]){
-                return tableType[option.type]();
-            }
+            return tableType[option.type]();
         }
     },
 }

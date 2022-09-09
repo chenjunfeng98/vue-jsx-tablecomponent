@@ -21,21 +21,15 @@ export default {
           label: "版权方:",
           width: "260",
           placeholder: "请输入版权方",
-          valueKey: "copyright"
-        },
-        {
-          type: "input",
-          label: "节目名称:",
-          width: "260",
-          placeholder: "请输入节目名称",
-          valueKey: "content_name"
+          valueKey: "inputData"
         },
         {
           type: "select",
           label: "消息类型:",
           width: "260",
           placeholder: "请选择类型",
-          valueKey: "messageType",
+          multiple: true,
+          valueKey: "selectData",
           // select的options 一般是从后台获取的
           selectOptions: [
             {
@@ -53,10 +47,11 @@ export default {
   },
   methods: {
     submit(tableData){
+      // 提交
       console.log(tableData);
     },
     reset(){
-      
+      // 重置
     },
 
   }
