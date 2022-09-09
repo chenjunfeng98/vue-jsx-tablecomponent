@@ -14,6 +14,17 @@ export default {
     TableComponent
   },
   data () {
+    // 自定义规则
+    let checkInput = (rule, value, callback)=>{
+      const reg = /^\d+$/;
+      if(!value){
+        callback(new Error('年龄不能为空'))
+      }else if (!reg.test(value)) {
+        callback(new Error("年龄必须为数字"));
+      }else{
+        callback();
+      } 
+    }
     return {
       options: [
         {
@@ -21,7 +32,10 @@ export default {
           label: "版权方:",
           width: "260",
           placeholder: "请输入版权方",
-          valueKey: "inputData"
+          valueKey: "inputData",
+          rules: [
+            { required: true, validator: checkInput, trigger: 'blur'}
+          ]
         },
         {
           type: "select",
@@ -40,6 +54,26 @@ export default {
               label: "系统消息2",
               value: "2"
             }
+          ],
+          rules: [
+            { required: true, message: '必填项', trigger: 'change'}
+          ]
+        },
+        {
+          type: 'timePicker',
+          label: '选择时间',
+          valueKey: "timePickerData",
+          rules: [
+            { required: true, message: '必填项', trigger: 'change'}
+          ]
+        },
+        {
+          type: 'datePicker',
+          label: '选择日期',
+          valueKey: "datePickerData",
+          valueFormat: "yyyy-MM-dd",
+          rules: [
+            { required: true, message: '必填项', trigger: 'change'}
           ]
         }
       ]
@@ -52,8 +86,7 @@ export default {
     },
     reset(){
       // 重置
-    },
-
+    }
   }
 }
 </script>
