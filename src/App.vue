@@ -1,7 +1,14 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <TableComponent :options="options" @submit="submit" @reset="reset"/>
+    <TableComponent :options="options" @submit="submit" @reset="reset">
+      <template v-slot>
+        <el-input label="选中" placeholder="请输入内容" @focus="getFocus" clearable>
+          <template slot="prepend">Http://</template>
+        </el-input>
+        <el-link type="primary">主要链接</el-link>
+      </template>
+    </TableComponent>
   </div>
 </template>
 
@@ -31,8 +38,12 @@ export default {
           type: "input",
           label: "版权方:",
           width: "260",
-          placeholder: "请输入版权方",
           valueKey: "inputData",
+          otherOptions: {
+            'show-password': true,
+            'clearable': true,
+            'placeholder': "请输入版权方"
+          },
           rules: [
             { required: true, validator: checkInput, trigger: 'blur'}
           ]
@@ -41,9 +52,11 @@ export default {
           type: "select",
           label: "消息类型:",
           width: "260",
-          placeholder: "请选择类型",
-          multiple: true,
           valueKey: "selectData",
+          otherOptions: {
+            placeholder: "请选择类型",
+            multiple: false
+          },
           // select的options 一般是从后台获取的
           selectOptions: [
             {
@@ -56,7 +69,7 @@ export default {
             }
           ],
           rules: [
-            { required: true, message: '必填项', trigger: 'change'}
+            { required: true, message: '必填项', trigger: 'blur'}
           ]
         },
         {
@@ -71,9 +84,29 @@ export default {
           type: 'datePicker',
           label: '选择日期',
           valueKey: "datePickerData",
-          valueFormat: "yyyy-MM-dd",
+          otherOptions: {
+            // valueFormat: "yyyy-MM-dd",
+          },
           rules: [
             { required: true, message: '必填项', trigger: 'change'}
+          ]
+        },
+        {
+          type: 'radioGroup',
+          label: '单选',
+          valueKey: "radioGroupData",
+          radioBoxs: [
+            { label: '美食/餐厅线上活动' },
+            { label: '线下主题活动' }
+          ]
+        },
+        {
+          type: 'checkGroup',
+          label: '多选',
+          valueKey: "checkGroupData",
+          checkBoxs: [
+            { label: '美食/餐厅线上活动' },
+            { label: '线下主题活动' }
           ]
         }
       ]
@@ -86,6 +119,9 @@ export default {
     },
     reset(){
       // 重置
+    },
+    getFocus(){
+      console.log('我被选中啦')
     }
   }
 }

@@ -1,3 +1,5 @@
+
+// 已废弃
 export default {
     name: 'tableComponent',
     // 接收option
@@ -15,10 +17,25 @@ export default {
     },
     // 渲染函数
     render() {
+        // 同样也支持插槽写法，提高配置表单得灵活性
+        const vNodes = this.$scopedSlots.default();
+        // console.log(vNodes);
         return (
             <div>
                 <el-form inline ref="componentFrom" props={{model: this.$data.tableData}}>
-                    {this.options.map(option => this.renderTable(option ,this.$data.tableData))}
+                    {this.options.map(option => this.renderTable(option))}
+                    {/* 插槽 */}
+                    {
+                        vNodes.map((node) => {
+                            console.log(node);
+                            let label = node.componentOptions.propsData.label || '';
+                            return (
+                                <el-form-item label={label}>
+                                    {node}
+                                </el-form-item>
+                            )
+                        })
+                    }
                     <el-form-item>
                       <el-button type="primary" on-click={() => {this.handleSubmit('componentFrom')}}>查询</el-button>
                     </el-form-item>
@@ -49,20 +66,19 @@ export default {
          * option 单项配置
          * tableData 表单组件保存表单输入后的键值对数据
          * */ 
-        renderTable(option, tableData){
+        renderTable(option){
             const tableType = {
                 input: () => (
                     <el-form-item 
                         label={option.label} 
                         label-position="right" 
                         rules={option.rules || []}
-                        prop={option.valueKey || ''}
+                        prop={option.valueKey || ''} // 筛选条件相关字段
                     >
                         <el-input
-                            clearable
                             style={{ width: (option.width || 260) + "px" }}
-                            v-model={tableData[option.valueKey]}
-                            placeholder={option.placeholder || '请输入内容'}
+                            v-model={this.$data.tableData[option.valueKey]}
+                            {...{attrs: option.otherOptions}}
                         >
                         </el-input>
                     </el-form-item>
@@ -72,13 +88,11 @@ export default {
                         label={option.label} 
                         label-position="right" 
                         rules={option.rules || []}
-                        prop={option.valueKey || ''}
+                        prop={option.valueKey || ''} // 筛选条件相关字段
                     >
                         <el-select
                             style={{ width: (option.width || 260) + "px" }}
-                            v-model={tableData[option.valueKey]} 
-                            multiple={option.multiple || false}
-                            placeholder={option.placeholder || '请选择内容'}
+                            v-model={this.$data.tableData[option.valueKey]}
                         >
                             { 
                                 option.selectOptions.map(item => (
@@ -93,11 +107,11 @@ export default {
                         label={option.label} 
                         label-position="right" 
                         rules={option.rules || []}
-                        prop={option.valueKey || ''}
+                        prop={option.valueKey || ''} // 筛选条件相关字段
                     >
                         <el-time-picker
                             is-range={option.isRange || true}
-                            v-model={tableData[option.valueKey]}
+                            v-model={this.$data.tableData[option.valueKey]}
                             range-separator="至"
                             start-placeholder="开始时间"
                             end-placeholder="结束时间"
@@ -111,20 +125,56 @@ export default {
                         label={option.label} 
                         label-position="right" 
                         rules={option.rules || []}
-                        prop={option.valueKey || ''}
+                        prop={option.valueKey || ''} // 筛选条件相关字段
                     >
                         <el-date-picker
-                            v-model={tableData[option.valueKey]}
-                            format={option.format || 'yyyy-MM-dd'}
+                            v-model={this.$data.tableData[option.valueKey]}
                             type="daterange"
-                            value-format={option.valueFormat || "timestamp"}
                             range-separator="至"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期"
                         >
                         </el-date-picker>
                     </el-form-item>
-                )
+                ),
+                // 多选 多选绑定的值必须为数组
+                checkGroup: () => {
+                    // this.$set(this.$data.tableData, option.valueKey, []);
+                    this.$data.tableData[option.valueKey] = [];
+                    return(
+                        <el-form-item
+                            label={option.label} 
+                            label-position="right"
+                        >
+                            <el-checkbox-group
+                                style={{ width: (option.width || 260) + "px" }}
+                                v-model={this.$data.tableData[option.valueKey]}
+                            >
+                                {   option.checkBoxs.map(item => <el-checkbox label={item.label} ></el-checkbox>)    }
+                            </el-checkbox-group>
+                        </el-form-item>
+                    )
+                },
+                // 单选
+                radioGroup: () => (
+                    <el-form-item
+                        label={option.label} 
+                        label-position="right"
+                    >
+                        <el-radio-group
+                            style={{ width: (option.width || 260) + "px" }}
+                            v-model={this.$data.tableData[option.valueKey]}
+                        >
+                            {
+                                option.radioBoxs.map(item => <el-radio label={item.label} ></el-radio>)
+                            }
+                        </el-radio-group>
+                    </el-form-item>
+                ),
+            }
+            // 自定义表单元素
+            if(option.type == 'customize'){
+                //
             }
             return tableType[option.type]();
         }
