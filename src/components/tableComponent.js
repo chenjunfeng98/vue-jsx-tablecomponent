@@ -19,7 +19,7 @@ export default {
     render() {
         // 同样也支持插槽写法，提高配置表单得灵活性
         const vNodes = this.$scopedSlots.default();
-        // console.log(vNodes);
+        console.log(vNodes);
         return (
             <div>
                 <el-form inline ref="componentFrom" props={{model: this.$data.tableData}}>
