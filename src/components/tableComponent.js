@@ -10,16 +10,23 @@ export default {
         }
     },
     data() {
+        const arrKey = ['checkBox'];
+        let list = {};
+        // 把绑定表单组件为数组的key-value，先添加到表单对象中，如果渲染的时候再添加就会出现循环渲染直接卡死
+        for(let item of this.options){
+            if(arrKey.includes(item.type)) {
+                list[item.valueKey] = [];
+            }
+        }
         return {
             //定义tableData用来保存表单输入后的键值对数据
-            tableData: {}
+            tableData: list
         }
     },
     // 渲染函数
     render() {
         // 同样也支持插槽写法，提高配置表单得灵活性
         const vNodes = this.$scopedSlots.default();
-        console.log(vNodes);
         return (
             <div>
                 <el-form inline ref="componentFrom" props={{model: this.$data.tableData}}>
@@ -27,7 +34,6 @@ export default {
                     {/* 插槽 */}
                     {
                         vNodes.map((node) => {
-                            console.log(node);
                             let label = node.componentOptions.propsData.label || '';
                             return (
                                 <el-form-item label={label}>
@@ -137,10 +143,8 @@ export default {
                         </el-date-picker>
                     </el-form-item>
                 ),
-                // 多选 多选绑定的值必须为数组
-                checkGroup: () => {
-                    // this.$set(this.$data.tableData, option.valueKey, []);
-                    this.$data.tableData[option.valueKey] = [];
+                // 多选
+                checkBox: () => {
                     return(
                         <el-form-item
                             label={option.label} 
@@ -156,7 +160,7 @@ export default {
                     )
                 },
                 // 单选
-                radioGroup: () => (
+                radio: () => (
                     <el-form-item
                         label={option.label} 
                         label-position="right"
@@ -174,7 +178,8 @@ export default {
             }
             // 自定义表单元素
             if(option.type == 'customize'){
-                //
+                // this.$set(this.$data.tableData, option.valueKey, '')
+                return;
             }
             return tableType[option.type]();
         }

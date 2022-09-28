@@ -3,7 +3,7 @@
     <img alt="Vue logo" src="./assets/logo.png">
     <TableComponent :options="options" @submit="submit" @reset="reset">
       <template v-slot>
-        <el-input label="选中" placeholder="请输入内容" @focus="getFocus" clearable>
+        <el-input label="选中" placeholder="请输入内容"  clearable>
           <template slot="prepend">Http://</template>
         </el-input>
         <el-link type="primary">主要链接</el-link>
@@ -92,7 +92,7 @@ export default {
           ]
         },
         {
-          type: 'radioGroup',
+          type: 'radio',
           label: '单选',
           valueKey: "radioGroupData",
           radioBoxs: [
@@ -101,7 +101,7 @@ export default {
           ]
         },
         {
-          type: 'checkGroup',
+          type: 'checkBox',
           label: '多选',
           valueKey: "checkGroupData",
           checkBoxs: [
