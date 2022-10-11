@@ -1,187 +1,82 @@
 
-// 已废弃
 export default {
-    name: 'tableComponent',
-    // 接收option
+    name: "DynTableItems",
     props: {
-        options: {
-            type: Array,
-            default: () => []
-        }
+      // 表格数据
+      tableData: {
+        type: Array,
+        require: true
+      },
+      // 表格字段，用于展示
+      tableHeader: {
+        type: Array,
+        require: true
+      },
+      total: {
+        type: [String, Number],
+        require: true
+      },
+      // 当前页数
+      page: {
+        type: Number,
+        default: 1
+      },
+      // 每页显示条目个数
+      pageSize: {
+        type: Number,
+        default: 10
+      },
+      // 每页显示个数选择器的选项设置
+      pageSizes: {
+        type: Array,
+        default: () => [1, 20, 30, 40]
+      }
     },
-    data() {
-        const arrKey = ['checkBox'];
-        let list = {};
-        // 把绑定表单组件为数组的key-value，先添加到表单对象中，如果渲染的时候再添加就会出现循环渲染直接卡死
-        for(let item of this.options){
-            if(arrKey.includes(item.type)) {
-                list[item.valueKey] = [];
-            }
-        }
-        return {
-            //定义tableData用来保存表单输入后的键值对数据
-            tableData: list
-        }
-    },
-    // 渲染函数
     render() {
-        // 同样也支持插槽写法，提高配置表单得灵活性
-        const vNodes = this.$scopedSlots.default();
-        return (
-            <div>
-                <el-form inline ref="componentFrom" props={{model: this.$data.tableData}}>
-                    {this.options.map(option => this.renderTable(option))}
-                    {/* 插槽 */}
-                    {
-                        vNodes.map((node) => {
-                            let label = node.componentOptions.propsData.label || '';
-                            return (
-                                <el-form-item label={label}>
-                                    {node}
-                                </el-form-item>
-                            )
-                        })
-                    }
-                    <el-form-item>
-                      <el-button type="primary" on-click={() => {this.handleSubmit('componentFrom')}}>查询</el-button>
-                    </el-form-item>
-                    <el-form-item>
-                      <el-button on-click={() => {this.handleReset('componentFrom')}}>重置</el-button>
-                    </el-form-item>
-                </el-form>
-            </div>
-        )
-    },
-    methods: {
-        // 点击查询按钮的时候触发父组件submit事件
-        handleSubmit(formName) {
-            this.$refs[formName].validate((valid) => {
-                if(valid){
-                    this.$emit("submit", this.tableData);
-                }else{
-                    return false;
-                }
-            })
-        },
-          // 清空表单
-        handleReset() {
-            this.tableData = {};
-            this.$emit("reset");
-        },
-        /**
-         * option 单项配置
-         * tableData 表单组件保存表单输入后的键值对数据
-         * */ 
-        renderTable(option){
-            const tableType = {
-                input: () => (
-                    <el-form-item 
-                        label={option.label} 
-                        label-position="right" 
-                        rules={option.rules || []}
-                        prop={option.valueKey || ''} // 筛选条件相关字段
-                    >
-                        <el-input
-                            style={{ width: (option.width || 260) + "px" }}
-                            v-model={this.$data.tableData[option.valueKey]}
-                            {...{attrs: option.otherOptions}}
-                        >
-                        </el-input>
-                    </el-form-item>
-                ),
-                select: () => (
-                    <el-form-item 
-                        label={option.label} 
-                        label-position="right" 
-                        rules={option.rules || []}
-                        prop={option.valueKey || ''} // 筛选条件相关字段
-                    >
-                        <el-select
-                            style={{ width: (option.width || 260) + "px" }}
-                            v-model={this.$data.tableData[option.valueKey]}
-                        >
-                            { 
-                                option.selectOptions.map(item => (
-                                    <el-option label={item.label} value={item.value}></el-option>
-                                )) 
-                            }
-                        </el-select>
-                    </el-form-item>
-                ),
-                timePicker: () => (
-                    <el-form-item 
-                        label={option.label} 
-                        label-position="right" 
-                        rules={option.rules || []}
-                        prop={option.valueKey || ''} // 筛选条件相关字段
-                    >
-                        <el-time-picker
-                            is-range={option.isRange || true}
-                            v-model={this.$data.tableData[option.valueKey]}
-                            range-separator="至"
-                            start-placeholder="开始时间"
-                            end-placeholder="结束时间"
-                            placeholder="选择时间范围"
-                        >    
-                        </el-time-picker>
-                    </el-form-item>
-                ),
-                datePicker: () => (
-                    <el-form-item
-                        label={option.label} 
-                        label-position="right" 
-                        rules={option.rules || []}
-                        prop={option.valueKey || ''} // 筛选条件相关字段
-                    >
-                        <el-date-picker
-                            v-model={this.$data.tableData[option.valueKey]}
-                            type="daterange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                        >
-                        </el-date-picker>
-                    </el-form-item>
-                ),
-                // 多选
-                checkBox: () => {
-                    return(
-                        <el-form-item
-                            label={option.label} 
-                            label-position="right"
-                        >
-                            <el-checkbox-group
-                                style={{ width: (option.width || 260) + "px" }}
-                                v-model={this.$data.tableData[option.valueKey]}
-                            >
-                                {   option.checkBoxs.map(item => <el-checkbox label={item.label} ></el-checkbox>)    }
-                            </el-checkbox-group>
-                        </el-form-item>
-                    )
-                },
-                // 单选
-                radio: () => (
-                    <el-form-item
-                        label={option.label} 
-                        label-position="right"
-                    >
-                        <el-radio-group
-                            style={{ width: (option.width || 260) + "px" }}
-                            v-model={this.$data.tableData[option.valueKey]}
-                        >
-                            {
-                                option.radioBoxs.map(item => <el-radio label={item.label} ></el-radio>)
-                            }
-                        </el-radio-group>
-                    </el-form-item>
-                ),
+      return (
+        <div>
+          <el-table border data={this.tableData} style="width: 100%">
+            {
+              this.tableHeader.map(col => {
+                return (
+                  <el-table-column label={col.label} prop={col.prop}
+                      // 插槽
+                      scopedSlots={{
+                        default: scope => {
+                          return col.prop === 'render' ? col.render(scope.row, scope.$index) : scope.row[col.prop]
+                        }
+                      }}
+                  >
+                  </el-table-column>
+                )
+              })
             }
-            // 自定义表单元素
-            if(option.type == 'customize'){
-                // this.$set(this.$data.tableData, option.valueKey, '')
-                return;
-            }
-            return tableType[option.type]();
-        }
+          </el-table>
+          <el-pagination
+            current-page={this.page}
+            page-sizes={this.pageSizes}
+            page-size={this.pageSize}
+            layout="total, sizes, prev, pager, next"
+            total={this.total}
+            onsize-change={ (val) => { 
+              this.$emit('pagination', val); 
+              this.$emit('update:pageSize', val) 
+            } }
+            oncurrent-change={ (val) => { 
+              this.$emit('pagination', val); 
+              this.$emit('update:page', val);
+            } }
+          ></el-pagination>
+        </div>
+      )
     }
-}
+  }
+
+//   <table-component 
+//   :table-data="userList"
+//   :table-header="tableHeader"
+//   :total="total"
+//   :page.sync="page"
+//   :pageSize.sync="pageSize"
+//   @pagination="reflashList"
+//   v-if="userList.length"></table-component>
