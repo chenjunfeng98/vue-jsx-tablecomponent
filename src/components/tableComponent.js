@@ -43,7 +43,7 @@ export default {
                       // 插槽
                       scopedSlots={{
                         default: scope => {
-                          return col.prop === 'render' ? col.render(scope.row, scope.$index) : scope.row[col.prop]
+                          return col.prop === 'render' ? col.render(scope.row, scope.$index) : fotmatter(scope.row, col.prop)
                         }
                       }}
                   >
@@ -72,6 +72,20 @@ export default {
     }
   }
 
+
+// 格式化绑定参数格式 例如: prop = a.b.c
+const fotmatter = (row, prop) => {
+  const porpList = prop.split('.');
+  let res = row;
+  if(porpList.length > 1) {
+    for(let item of porpList){
+      res = res[item]
+    }
+    return res;
+  }else {
+    return row[prop]
+  }
+}
 //   <table-component 
 //   :table-data="userList"
 //   :table-header="tableHeader"
