@@ -2,6 +2,10 @@
 export default {
     name: "DynTableItems",
     props: {
+      // 表格配置
+      tableConfig: {
+        type: Object
+      },
       // 表格数据
       tableData: {
         type: Array,
@@ -35,11 +39,11 @@ export default {
     render() {
       return (
         <div>
-          <el-table border data={this.tableData} style="width: 100%">
+          <el-table border data={this.tableData} {...{attrs: this.tableConfig}}>
             {
               this.tableHeader.map(col => {
                 return (
-                  <el-table-column label={col.label} prop={col.prop}
+                  <el-table-column label={col.label} prop={col.prop} {...{attrs: col.options}}
                       // 插槽
                       scopedSlots={{
                         default: scope => {

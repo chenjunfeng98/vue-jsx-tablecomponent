@@ -5,6 +5,7 @@
       :table-data="table_data"
       :table-header="table_columns"
       :total="total"
+      :tableConfig="tableConfig"
     ></table-component>
   </div>
 </template>
@@ -160,38 +161,68 @@ export default {
         {
             label: '渠道名', 
             prop: 'sp_id',
+            options: {
+              width: '200'
+            }
         },
         {
             label: '使用日期', 
             prop: 'use_date',
+            options: {
+              width: '200'
+            }
         },
         {
             label: '月包设置数量',
-            prop: 'package_info.package_month.vip_day_count'
+            prop: 'package_info.package_month.vip_day_count',
+            options: {
+              width: '200',
+              sortable: true
+            }
         },
         {
             label: '月包使用数量',
-            prop: 'package_info.package_month.vip_day_use'
+            prop: 'package_info.package_month.vip_day_use',
+            options: {
+              width: '200'
+            }
         },
         {
             label: '年包设置数量',
-            prop: 'package_info.package_year.vip_day_count'
+            prop: 'package_info.package_year.vip_day_count',
+            options: {
+              width: '200'
+            }
         },
         {
             label: '年包使用数量',
-            prop: 'package_info.package_year.vip_day_use'
+            prop: 'package_info.package_year.vip_day_use',
+            options: {
+              width: '200'
+            }
         },
         {
             label: '最近操作人',
-            prop: 'create_by'
+            prop: 'create_by',
+            options: {
+              width: '200'
+            }
         },
         {
             label: '最近操作时间',
-            prop: 'update_at'
+            prop: 'update_at',
+            options: {
+              width: '200',
+              sortable: true
+            }
         },
         {
             label: '操作', 
             prop: 'render',
+            options: {
+              fixed: "right",
+              width: "150px"
+            },
             render: (row, idx) => {
                 return ((h) => {
                   return (
@@ -204,7 +235,10 @@ export default {
             }
         },
       ],
-      total: 10
+      total: 10,
+      tableConfig: {
+        height: "300"
+      }
     };
   },
   methods: {
